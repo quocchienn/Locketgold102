@@ -1,4 +1,4 @@
-# Clash Mi Configuration for Locket Gold Module (Converted from Shadowrocket .sgmodule)
+# Clash Config for Locket Gold Module (Converted for Hiddify Proxy & VPN)
 
 # Basic settings (adjust as needed)
 mixed-port: 7890
@@ -12,10 +12,7 @@ dns:
   enable: true
   listen: 0.0.0.0:1053
 
-# MITM settings to intercept HTTPS traffic
-tun:
-  enable: false  # Enable if needed for full system proxy, but for MITM, install CA cert manually
-
+# Sniffer for domain detection
 sniffer:
   enable: true
   sniffing:
@@ -24,31 +21,9 @@ sniffer:
   force-domain:
     - api.revenuecat.com
 
-# HTTP Engine for rewriting and scripts
-http:
-  # JavaScript scripts for request/response modification
-  script:
-    - match: ^https://api\.revenuecat\.com/.+/(receipts$|subscribers/[^/]+$)
-      name: revenuecat
-      type: response
-    - match: ^https://api\.revenuecat\.com/.+/(receipts|subscribers)
-      name: deleteHeader
-      type: request
-
-  script-providers:
-    revenuecat:
-      url: https://raw.githubusercontent.com/quocchienn/lockcrack/refs/heads/module/Locket_Gold.js
-      interval: 86400
-    deleteHeader:
-      url: https://raw.githubusercontent.com/quocchienn/lockcrack/refs/heads/module/deleteheader.js
-      interval: 86400
-
-# Add proxies, proxy-groups, and rules as needed for your setup
-# Example minimal proxies (add your own)
+# Proxies, groups, rules - add your own if needed for actual proxying
 proxies: []
 proxy-groups: []
 rules: []
 
-# Note: To use MITM for HTTPS decryption, you need to install the CA certificate from Clash Mi settings.
-# This config assumes Clash Mi supports Stash-like HTTP script features for overwrite customization.
-# If not exact, adjust based on app documentation. Enable TUN mode if required for system-wide proxy.
+# Note: Hiddify may not support full script/rewrite features, so API modification via JS (e.g., for RevenueCat) won't work here. Route traffic directly or through a proxy outbound as needed.
