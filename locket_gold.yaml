@@ -1,18 +1,20 @@
-# Clash Config for Locket Gold Module (Converted for Hiddify Proxy & VPN)
+# Karing Configuration for Locket Gold Module (Converted from Shadowrocket .sgmodule)
+# Note: Karing supports full Clash config, so this should work for routing and basic sniffing.
+# For script/rewrite, test if Karing enables it; if not, modify may not apply.
 
-# Basic settings (adjust as needed)
 mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
 ipv6: true
 
-# DNS settings (basic)
+# DNS settings
 dns:
   enable: true
   listen: 0.0.0.0:1053
+  fake-ip-range: 198.18.0.1/16  # For fake-ip mode if needed
 
-# Sniffer for domain detection
+# Sniffing for domain detection
 sniffer:
   enable: true
   sniffing:
@@ -21,9 +23,28 @@ sniffer:
   force-domain:
     - api.revenuecat.com
 
-# Proxies, groups, rules - add your own if needed for actual proxying
+# HTTP engine for scripts (if supported in Karing; otherwise, ignore this section)
+http:
+  script:
+    - match: ^https://api\.revenuecat\.com/.+/(receipts$|subscribers/[^/]+$)
+      name: revenuecat
+      type: response
+    - match: ^https://api\.revenuecat\.com/.+/(receipts|subscribers)
+      name: deleteHeader
+      type: request
+
+  script-providers:
+    revenuecat:
+      url: https://raw.githubusercontent.com/quocchienn/lockcrack/refs/heads/module/Locket_Gold.js
+      interval: 86400
+    deleteHeader:
+      url: https://raw.githubusercontent.com/quocchienn/lockcrack/refs/heads/module/deleteheader.js
+      interval: 86400
+
+# Proxies, groups, rules (minimal; add your own proxies if needed)
 proxies: []
 proxy-groups: []
-rules: []
+rules:
+  - DOMAIN,api.revenuecat.com,DIRECT  # Or route to a proxy if MITM needed
 
-# Note: Hiddify may not support full script/rewrite features, so API modification via JS (e.g., for RevenueCat) won't work here. Route traffic directly or through a proxy outbound as needed.
+# Additional Karing-specific: Enable fake-ip or TUN if required in app settings.
